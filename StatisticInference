@@ -18,6 +18,30 @@ n_h <- (N_h / N) * n # Sample size for each stratum
 print("Sample size for each stratum:")
 print(n_h)
 
+#********************************************* Ley de los grandes números *******************************************************************
+
+# Configuraci?n inicial
+set.seed(123)  # Fijar semilla para reproducibilidad
+n_lanzamientos_list <- c(10, 100, 1000, 10000)  # Diferentes tama?os de muestra
+colors <- c("blue", "green", "orange", "purple")  # Colores para los gr?ficos
+
+# Configuraci?n del layout para m?ltiples gr?ficos (4 gr?ficos)
+par(mfrow = c(2, 2))
+
+for (i in 1:length(n_lanzamientos_list)) {
+  n_lanzamientos <- n_lanzamientos_list[i]  # Escenario actual
+  resultados <- sample(c(0, 1), size = n_lanzamientos, replace = TRUE, prob = c(0.5, 0.5))  # Simular lanzamientos
+  
+  # C?lculo de la proporci?n acumulada de caras
+  proporcion_caras <- cumsum(resultados == 0) / (1:n_lanzamientos)
+  
+  # Gr?fico para visualizar la convergencia
+  plot(1:n_lanzamientos, proporcion_caras, type = "l", col = colors[i], 
+       xlab = "N?mero de lanzamientos", ylab = "Proporci?n de caras", 
+       main = paste("n =", n_lanzamientos), ylim = c(0, 1))
+  abline(h = 0.5, col = "red", lwd = 2)  # L?nea que representa la proporci?n te?rica (0.5)
+}
+
 #Explanation:
 #This block calculates the sample size for a finite population using the given parameters, such as population size, confidence level, and margin of error.
 #Then, it performs proportional allocation for stratified sampling by calculating the sample size for each stratum proportionally to the population size of that stratum.
