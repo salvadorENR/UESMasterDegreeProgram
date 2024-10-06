@@ -1,1 +1,58 @@
+#R Code for Sample Size Calculation for a Finite Population and Stratified Sampling:
+# Parameters
+N <- 1500 # Total population size
+p <- 0.5  # Proportion (expected proportion in the population)
+Z <- 1.96 # Z-value for 95% confidence level
+E <- 0.05 # Margin of error
+
+# Sample size calculation for a finite population
+n <- (N * Z^2 * p * (1 - p)) / ((E^2 * (N - 1)) + (Z^2 * p * (1 - p)))
+n <- ceiling(n) # Round up to the nearest whole number
+
+# Output the sample size
+print(paste("Sample size:", n))
+
+# Stratified sampling with proportional allocation
+N_h <- c(20, 22, 28, 13, 19, 13, 28, 14, 26, 19, 27, 25, 17, 18, 21, 23, 18, 16, 30, 20) # Population sizes in each stratum
+n_h <- (N_h / N) * n # Sample size for each stratum
+print("Sample size for each stratum:")
+print(n_h)
+
+#Explanation:
+#This block calculates the sample size for a finite population using the given parameters, such as population size, confidence level, and margin of error.
+#Then, it performs proportional allocation for stratified sampling by calculating the sample size for each stratum proportionally to the population size of that stratum.
+
+#*********************************************** R Code for Selecting Stratified Samples Using the sampling Package *********************************
+# Install and load the necessary package
+install.packages("sampling")
+library(sampling)
+
+# Simulated dataset
+muestra_estratos_datos <- read.csv("muestra_estratos_datos.csv", sep = ";", header = TRUE)
+
+# Total sample size
+n_total <- 306
+
+# Sample sizes for each stratum (based on the previous calculation)
+tamanhos <- c(4, 4, 6, 3, 4, 3, 6, 3, 5, 4, 6, 5, 3, 4, 4, 5, 4, 3, 6, 4)
+
+# Select the stratified sample using the strata() function
+muestra <- strata(muestra_estratos_datos, c("tipo_modelo", "grupo", "flag_aci"), size = tamanhos, method = "srswor")
+
+# Display the selected sample
+print(head(muestra))
+
+# Get the selected sample data
+muestra_elegida <- getdata(muestra_estratos_datos, muestra)
+
+# Display the selected sample
+print(muestra_elegida)
+
+# Save the selected sample to a CSV file
+write.csv(muestra_elegida, file = "muestra_estratos.csv", row.names = FALSE, sep = "\t", quote = TRUE)
+
+#Explanation:
+#This block uses the sampling package to select a stratified sample from a dataset.
+#It assigns the sample sizes for each stratum and uses the strata() function to perform the sampling. The results are saved in a CSV file for further use.
+
 
