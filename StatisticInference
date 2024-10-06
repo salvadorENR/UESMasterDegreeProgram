@@ -1,4 +1,4 @@
-#R Code for Sample Size Calculation for a Finite Population and Stratified Sampling:
+#********************* R Code for Sample Size Calculation for a Finite Population and Stratified Sampling ******************************************
 # Parameters
 N <- 1500 # Total population size
 p <- 0.5  # Proportion (expected proportion in the population)
