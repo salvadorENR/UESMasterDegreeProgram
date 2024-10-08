@@ -80,3 +80,63 @@ write.csv(muestra_elegida, file = "muestra_estratos.csv", row.names = FALSE, sep
 #It assigns the sample sizes for each stratum and uses the strata() function to perform the sampling. The results are saved in a CSV file for further use.
 
 
+# Establecer los par?metros
+set.seed(123)  # Fijar semilla para reproducibilidad
+n <- 30        # Tama?o de la muestra
+mu <- 5        # Media verdadera
+sigma <- 2     # Desviaci?n est?ndar verdadera
+rep <- 100      # N?mero de simulaciones
+alpha <- 0.05  # Nivel de significancia (intervalo de confianza del 95%)
+
+# Almacenar resultados
+contiene_mu <- logical(rep)  # Variable para almacenar si el intervalo contiene mu o no (1,0)
+Li <- numeric(rep) # Limites inferiores de los intervalos
+Ls <- numeric(rep) # Limites superiores de los intervalos
+
+# Simulaci?n
+for (i in 1:rep) {
+  muestra <- rnorm(n, mean = mu, sd = sigma)  # Generar muestra
+  media_muestral <- mean(muestra)               # Calcular media muestral
+  error_margin <- qnorm(1 - alpha/2) * sigma / sqrt(n)  # Margen de error (z * sigma / sqrt(n))
+  
+  # Limites del intervalo de confianza
+  Li[i] <-media_muestral - error_margin
+  Ls[i] <-  media_muestral + error_margin
+  
+  # Verificar si el intervalo contiene la media verdadera
+  contiene_mu[i] <- Li[i] <= mu & Ls[i] >= mu
+}
+
+# Calcular porcentaje de intervalos que contienen la media verdadera
+porc_intevalos <- mean(contiene_mu) * 100
+cat("El porcentaje de intervalos que contienen la verdadera media es:", porc_intevalos, "%\n")
+
+
+par(mfrow = c(1, 1))
+# Gr?fico para visualizar los intervalos
+plot(1:rep, Li, ylim = range(c(Li, Ls, mu)), 
+     xlab = "Simulaci?n", ylab = "Intervalo de confianza", pch = "-", col = "blue")
+points(1:rep, Ls, pch = "-", col = "blue")
+abline(h = mu, col = "red", lwd = 2, lty = 2)  # L?nea roja en la verdadera media
+title(main = "Intervalos de confianza (95%) en 1000 simulaciones")
+legend("topright", legend = c("Contiene mu", "No contiene mu"), 
+       col = c("blue", "red"), lty = c(1, 1), bty = "n")
+
+# A?adir color para los intervalos que no contienen la media verdadera
+for (i in 1:rep) {
+  if (!contiene_mu[i]) {
+    segments(i, Li[i], i, Ls[i], col = "red", lwd = 2)
+  } else {
+    segments(i, Li[i], i, Ls[i], col = "blue", lwd = 2)
+  }
+}
+
+
+
+
+
+
+
+
+
+
